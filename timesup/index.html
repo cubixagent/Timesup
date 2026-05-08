@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl" data-theme="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0d1a" media="(prefers-color-scheme: dark)" />
+  <meta name="theme-color" content="#6c63ff" media="(prefers-color-scheme: light)" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="TimesUp" />
+  <meta name="description" content="اپلیکیشن مطالعه و پیشرفت برای کنکور - تایمزآپ" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <title>TimesUp — تایمزآپ</title>
+</head>
+<body>
+
+<!-- ── Toast Container ───────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ══════════════════════════════════════════════
+     ONBOARDING OVERLAY
+     ══════════════════════════════════════════════ -->
+<div id="onboarding-overlay">
+  <div class="onboard-progress-bar">
+    <div id="onboard-progress"></div>
+  </div>
+
+  <!-- Step 1: Welcome -->
+  <div class="onboard-step active" data-step="1">
+    <div class="onboard-emoji">⏱️</div>
+    <div class="onboard-title">به TimesUp خوش اومدی!</div>
+    <div class="onboard-desc">
+      اپلیکیشن هوشمند مطالعه برای کنکور.<br>
+      ثبت دقیق زمان، تحلیل عملکرد، و ایجاد انگیزه برای رسیدن به هدفت.
+    </div>
+    <div class="onboard-btns">
+      <button id="btn-onboard-next">بریم! 🚀</button>
+      <button id="btn-onboard-skip">رد کن</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Name & Goal -->
+  <div class="onboard-step" data-step="2">
+    <div class="onboard-emoji">🎯</div>
+    <div class="onboard-title">هدفت رو مشخص کن</div>
+    <div class="onboard-desc">این اطلاعات رو از تنظیمات هم می‌تونی عوض کنی</div>
+    <div class="onboard-fields">
+      <input class="input-field" id="ob-name" type="text" placeholder="اسمت چیه؟ 👤" />
+      <input class="input-field" id="ob-field" type="text" placeholder="رشته‌ای که میخوای بخونی 📘" />
+      <input class="input-field" id="ob-uni" type="text" placeholder="دانشگاه رویاهات 🏛️" />
+      <input class="input-field" id="ob-rank" type="text" placeholder="رتبه‌ای که آرزوشو داری 🏆" />
+    </div>
+    <div class="onboard-btns">
+      <button id="btn-onboard-next">بعدی ➡️</button>
+    </div>
+  </div>
+
+  <!-- Step 3: Notifications -->
+  <div class="onboard-step" data-step="3">
+    <div class="onboard-emoji">🔔</div>
+    <div class="onboard-title">اعلان‌ها رو فعال کن</div>
+    <div class="onboard-desc">
+      TimesUp در طول روز از حالت تو می‌پرسه و بهت انگیزه می‌ده.<br>
+      اعلان‌ها کمک می‌کنن نظم بهتری داشته باشی.
+    </div>
+    <div class="onboard-btns">
+      <button id="btn-onboard-next">فعال کن 🔔</button>
+      <button id="btn-onboard-skip">نه ممنون</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MAIN APP
+     ══════════════════════════════════════════════ -->
+<div id="main-app">
+
+  <!-- ══ PAGE: HOME ════════════════════════════ -->
+  <div id="page-home" class="page active">
+    <div class="page-header">
+      <div class="section-title">تایمزآپ <span>⏱️</span></div>
+      <div class="chip" id="streak-chip">🔥 0 روز</div>
+    </div>
+
+    <!-- Profile Header -->
+    <div id="profile-header" class="card" style="margin-bottom:14px;"></div>
+
+    <!-- Study Art -->
+    <div class="art-canvas-wrapper">
+      <canvas id="study-art"></canvas>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-value" id="stat-today">۰</span>
+        <span class="stat-label">امروز</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-week">۰</span>
+        <span class="stat-label">این هفته</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-streak">۰ روز</span>
+        <span class="stat-label">رشته</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-sessions">۰</span>
+        <span class="stat-label">جلسه امروز</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-tests">۰</span>
+        <span class="stat-label">تست امروز</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-value" id="stat-total">۰</span>
+        <span class="stat-label">کل مطالعه</span>
+      </div>
+    </div>
+
+    <!-- Start Timer -->
+    <button class="btn-start-big" id="btn-start-timer">
+      <span>▶️</span> شروع مطالعه
+    </button>
+
+    <!-- Today's Sessions -->
+    <div class="card">
+      <div class="section-title" style="font-size:16px;margin-bottom:12px;">
+        <span>📋</span> جلسات امروز
+      </div>
+      <div id="sessions-list"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: TIMER ════════════════════════════ -->
+  <div id="page-timer" class="page">
+    <div class="timer-bg-glow"></div>
+
+    <!-- Header -->
+    <div class="timer-header">
+      <div class="timer-session-info">
+        <span id="timer-subject-display">درس</span>
+        <span id="timer-topic-display">مبحث</span>
+      </div>
+      <button class="timer-distraction-btn" id="btn-distraction" title="ثبت حواس‌پرتی">
+        🫣 <span id="distraction-count">0</span>
+      </button>
+    </div>
+
+    <!-- Ring decoration -->
+    <div class="timer-ring"></div>
+
+    <!-- Timer Center -->
+    <div class="timer-center">
+      <div class="timer-display font-mono" id="timer-display">00:00</div>
+      <div class="timer-controls">
+        <button class="btn-timer-ctrl" id="btn-pause-resume">⏸ توقف</button>
+        <button class="btn-timer-ctrl" id="btn-stop-timer">⏹ پایان</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: DASHBOARD ═══════════════════════ -->
+  <div id="page-dashboard" class="page">
+    <div class="page-header">
+      <div class="section-title">داشبورد <span>📊</span></div>
+      <button class="btn-sm" id="btn-gen-pdf">📄 گزارش PDF</button>
+    </div>
+
+    <!-- Week Chart -->
+    <div class="card">
+      <div class="section-title" style="font-size:15px;margin-bottom:12px;"><span>📅</span> مطالعه این هفته</div>
+      <div class="chart-wrapper">
+        <canvas id="week-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Distraction Heatmap -->
+    <div class="card">
+      <div class="section-title" style="font-size:15px;margin-bottom:4px;"><span>🫣</span> نقشه حواس‌پرتی</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:12px;">میزان حواس‌پرتی در هر نیم‌ساعت از روز</div>
+      <div id="heatmap-container"></div>
+      <div class="heatmap-legend">
+        <span>کم</span>
+        <div class="legend-scale">
+          <div class="legend-dot" style="background:hsl(240,80%,30%)"></div>
+          <div class="legend-dot" style="background:hsl(200,80%,40%)"></div>
+          <div class="legend-dot" style="background:hsl(160,80%,40%)"></div>
+          <div class="legend-dot" style="background:hsl(80,80%,40%)"></div>
+          <div class="legend-dot" style="background:hsl(40,80%,50%)"></div>
+        </div>
+        <span>زیاد</span>
+      </div>
+    </div>
+
+    <!-- All sessions today -->
+    <div class="card">
+      <div class="section-title" style="font-size:15px;margin-bottom:12px;"><span>📋</span> جلسات امروز</div>
+      <div id="sessions-list-dash"></div>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: SETTINGS ════════════════════════ -->
+  <div id="page-settings" class="page">
+    <div class="page-header">
+      <div class="section-title">تنظیمات <span>⚙️</span></div>
+    </div>
+
+    <!-- Profile Settings -->
+    <div class="settings-section">
+      <div class="settings-section-title">👤 پروفایل</div>
+      <div class="card" style="padding:16px;">
+        <div class="field-group">
+          <label class="field-label">نام</label>
+          <input class="input-field" id="set-name" type="text" placeholder="اسمت" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">رشته هدف</label>
+          <input class="input-field" id="set-field" type="text" placeholder="مثلاً: مهندسی پزشکی" />
+        </div>
+        <div class="field-group">
+          <label class="field-label">دانشگاه هدف</label>
+          <input class="input-field" id="set-uni" type="text" placeholder="مثلاً: دانشگاه تهران" />
+        </div>
+        <div class="field-group" style="margin-bottom:0;">
+          <label class="field-label">رتبه هدف</label>
+          <input class="input-field" id="set-rank" type="text" placeholder="مثلاً: زیر ۱۰۰" />
+        </div>
+        <div style="margin-top:14px;">
+          <button class="btn-primary" id="btn-save-profile" style="width:100%;">💾 ذخیره پروفایل</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Appearance -->
+    <div class="settings-section">
+      <div class="settings-section-title">🎨 ظاهر</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">🌙 تم برنامه</div>
+        </div>
+        <select class="setting-select" id="set-theme">
+          <option value="auto">خودکار</option>
+          <option value="dark">تاریک</option>
+          <option value="light">روشن</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Timer Settings -->
+    <div class="settings-section">
+      <div class="settings-section-title">⏱️ تایمر</div>
+      <div class="setting-row">
+        <div class="setting-label">📟 فونت تایمر</div>
+        <select class="setting-select" id="set-timer-font">
+          <option value="mono">Mono کلاسیک</option>
+          <option value="thin">نازک</option>
+          <option value="rounded">گرد</option>
+          <option value="bold">ضخیم</option>
+        </select>
+      </div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">⏱ نمایش ثانیه</div>
+          <span class="setting-sub">نمایش ثانیه در تایمر</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="set-show-seconds" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div class="settings-section">
+      <div class="settings-section-title">🔔 اعلان‌ها</div>
+      <div class="setting-row">
+        <div>
+          <div class="setting-label">🔔 فعال‌سازی اعلان</div>
+          <span class="setting-sub">اعلان وضعیت و انگیزشی</span>
+        </div>
+        <label class="toggle">
+          <input type="checkbox" id="set-notif" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">🌅 چک وضعیت صبح</div>
+        <label class="toggle">
+          <input type="checkbox" id="set-notif-morning" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">☀️ چک وضعیت بعدازظهر</div>
+        <label class="toggle">
+          <input type="checkbox" id="set-notif-afternoon" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+      <div class="setting-row">
+        <div class="setting-label">🌙 چک وضعیت شب</div>
+        <label class="toggle">
+          <input type="checkbox" id="set-notif-evening" checked />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Data Management -->
+    <div class="settings-section">
+      <div class="settings-section-title">💾 مدیریت داده</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn-ghost" id="btn-export" style="flex:1;">📤 بکاپ</button>
+        <button class="btn-ghost" id="btn-import" style="flex:1;">📥 ایمپورت</button>
+        <input type="file" id="import-file-input" accept=".json" style="display:none;" />
+      </div>
+      <div style="margin-top:10px;">
+        <button class="btn-danger" id="btn-reset">🗑️ ریست کامل برنامه</button>
+      </div>
+    </div>
+
+    <!-- App Info -->
+    <div class="card" style="text-align:center;padding:20px;">
+      <div style="font-size:28px;margin-bottom:8px;">⏱️</div>
+      <div style="font-weight:800;font-size:18px;color:var(--accent);">TimesUp</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px;">نسخه ۱.۰.۰ — برای کنکور می‌جنگیم 💪</div>
+    </div>
+  </div>
+
+  <!-- ══ BOTTOM NAVIGATION ═══════════════════ -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" data-page="home">
+      <span class="nav-icon">🏠</span>
+      <span>خانه</span>
+    </button>
+    <button class="nav-btn" data-page="dashboard">
+      <span class="nav-icon">📊</span>
+      <span>داشبورد</span>
+    </button>
+    <button class="nav-btn" data-page="settings">
+      <span class="nav-icon">⚙️</span>
+      <span>تنظیمات</span>
+    </button>
+  </nav>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     MODALS
+     ══════════════════════════════════════════════ -->
+
+<!-- Session Start Modal -->
+<div class="modal-overlay" id="session-start-modal">
+  <div class="modal-inner">
+    <div class="modal-handle"></div>
+    <div class="modal-title">📚 شروع جلسه مطالعه</div>
+    <div class="field-group">
+      <label class="field-label">نام درس *</label>
+      <input class="input-field" id="session-subject" type="text" placeholder="مثلاً: ریاضی، فیزیک، ادبیات ..." />
+    </div>
+    <div class="field-group">
+      <label class="field-label">مبحث (اختیاری)</label>
+      <input class="input-field" id="session-topic" type="text" placeholder="مثلاً: مشتق، نیرو، دستور زبان ..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="btn-confirm-session">▶️ شروع تایمر</button>
+      <button class="btn-ghost" id="btn-cancel-session">انصراف</button>
+    </div>
+  </div>
+</div>
+
+<!-- Session End Modal -->
+<div class="modal-overlay" id="session-end-modal">
+  <div class="modal-inner">
+    <div class="modal-handle"></div>
+    <div class="modal-title">✅ جلسه تموم شد!</div>
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-size:32px;font-weight:800;color:var(--accent);" id="session-duration-display">۰m</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:4px;">مطالعه کردی 🎉</div>
+    </div>
+    <div class="field-group">
+      <label class="field-label">📝 چند تست زدی؟</label>
+      <input class="input-field" id="session-tests-input" type="number" min="0" placeholder="تعداد تست (اختیاری)" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">⭐ از عملکردت راضی بودی؟</label>
+      <div class="satisfaction-row">
+        <span>۱</span>
+        <input type="range" id="session-satisfaction" min="1" max="10" value="7" step="1" />
+        <span>۱۰</span>
+        <span id="sat-val">۷</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="btn-confirm-complete">💾 ذخیره</button>
+      <button class="btn-ghost" id="btn-skip-complete">رد کن</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-overlay" id="profile-modal">
+  <div class="modal-inner">
+    <div class="modal-handle"></div>
+    <div class="modal-title">🎯 پروفایل خودت رو کامل کن</div>
+    <div class="field-group">
+      <label class="field-label">نام</label>
+      <input class="input-field" id="modal-name" type="text" placeholder="اسمت" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">رشته هدف</label>
+      <input class="input-field" id="modal-field" type="text" placeholder="مثلاً: پزشکی" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">دانشگاه هدف</label>
+      <input class="input-field" id="modal-uni" type="text" placeholder="مثلاً: دانشگاه تهران" />
+    </div>
+    <div class="field-group">
+      <label class="field-label">رتبه هدف</label>
+      <input class="input-field" id="modal-rank" type="text" placeholder="مثلاً: زیر ۵۰۰" />
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" id="btn-save-profile-modal">💾 ذخیره</button>
+      <button class="btn-ghost" onclick="App.closeModal('profile-modal')">بعداً</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/timer.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/pdf.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+  // Satisfaction slider live update
+  document.getElementById('session-satisfaction')?.addEventListener('input', e => {
+    document.getElementById('sat-val').textContent = e.target.value;
+  });
+
+  // Streak chip update
+  function updateStreakChip() {
+    const streak = Storage.getStreakDays();
+    const chip = document.getElementById('streak-chip');
+    if (chip) chip.textContent = `🔥 ${streak} روز`;
+  }
+  document.addEventListener('DOMContentLoaded', () => setTimeout(updateStreakChip, 500));
+
+  // Dashboard sessions list (separate from home)
+  function renderDashSessions() {
+    const list = document.getElementById('sessions-list-dash');
+    if (!list) return;
+    const sessions = Storage.getTodaySessions().reverse();
+    if (!sessions.length) {
+      list.innerHTML = '<div class="empty-state">هنوز جلسه‌ای ثبت نشده 📚</div>';
+      return;
+    }
+    list.innerHTML = sessions.map(s => `
+      <div class="session-item">
+        <div class="session-info">
+          <span class="session-subject">${s.subject || '---'}</span>
+          <span class="session-topic">${s.topic || ''}</span>
+        </div>
+        <div class="session-meta">
+          <span class="session-duration">${fmtHM(s.duration || 0)}</span>
+          <span class="session-tests">${s.testCount || 0} تست</span>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Override dashboard init to also render dash sessions
+  const origInit = Dashboard.init.bind(Dashboard);
+  Dashboard.init = function() {
+    origInit();
+    renderDashSessions();
+    updateStreakChip();
+  };
+</script>
+</body>
+</html>
